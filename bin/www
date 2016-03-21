@@ -5,14 +5,14 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('google sheard doc:server');
+var debug = require('debug')('google_sheard_doc:server');
 var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '80');
 app.set('port', port);
 
 /**
@@ -20,6 +20,22 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+/*
+* socket.io
+* */
+var io = require('socket.io').listen(server);
+var doc = "please type something";
+io.on('connection', function (socket) {
+
+  socket.emit('news', doc);
+  socket.on('userType', function (userData) {
+    doc = userData;
+    console.log(doc);
+    io.emit('news', doc);
+  });
+});
+
 
 /**
  * Listen on provided port, on all network interfaces.
